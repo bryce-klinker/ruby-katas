@@ -31,9 +31,15 @@ describe StringCalculator do
     end
 
     context('given custom delimiter') do
-      context('single character custom delmiter') do
-        it('returns sum of two numbers') do
+      context('single character custom delimiter') do
+        it('returns sum of numbers') do
           expect(@calculator.add('//|\n75|12|32')).to eql(119)
+        end
+      end
+
+      context('multiple character custom delimiter') do
+        it('returns sum of numbers') do
+          expect(@calculator.add('//[&&]\n54&&54')).to eql(108)
         end
       end
     end

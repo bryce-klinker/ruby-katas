@@ -4,8 +4,7 @@ class StringCalculator
       return 0
     end
 
-    delimiter = getDelimiter(input)
-    numbers = input.split(delimiter).map { |val| val.to_i }
+    numbers = getNumbers(input)
     return numbers.inject(0) { |sum, number| sum + number }
   end
 
@@ -13,6 +12,11 @@ class StringCalculator
     delimiter = hasCustomDelimiter(input) ? getDelimiter(input) : ','
     numberString = hasCustomDelimiter(input) ? stripDelimiter(input) : input
     return numberString.split(delimiter).map { |val| val.to_i }
+  end
+
+  def stripDelimiter(input)
+    endOfDelimiterIndex = input.index('\n')
+    return input[endOfDelimiterIndex + 2..-1]
   end
 
   def hasCustomDelimiter(input)
@@ -24,9 +28,35 @@ class StringCalculator
       return ','
     end
 
-    inputWithoutDelimiterIndicator = input[2..-1]
-    newLineIndex = inputWithoutDelimiterIndicator.index('\n')
-    delimiter = inputWithoutDelimiterIndicator[0..newLineIndex - 1]
-    return delimiter
+    if isSingleCharacterDelimiter(input)
+      return getSingleCharacterDelimiter(input)
+    end
+
+    return getMultipleCharacterDelimiter(input)
+  end
+
+  def isSingleCharacterDelimiter(input)
+    return hasCustomDelimiter(input) & !input.start_with?('//[')
+  end
+
+  def getSingleCharacterDelimiter(input)
+    inputWithoutDelimiterIndicator = stripCustomDelimiterStart(input)
+    endOfDelimiterIndex = getEndOfDelimiterIndex(inputWithoutDelimiterIndicator)
+
+    return inputWithoutDelimiterIndicator[0..endOfDelimiterIndex - 1]
+  end
+
+  def getMultipleCharacterDelimiter(input)
+    inputWithoutDelimiterIndicator = stripCustomDelimiterStart(input)
+    endOfDelimiterIndex = getEndOfDelimiterIndex(inputWithoutDelimiterIndicator)
+    return inputWithoutDelimiterIndicator[1..endOfDelimiterIndex - 2]
+  end
+
+  def stripCustomDelimiterStart(input)
+    return input[2..-1]
+  end
+
+  def getEndOfDelimiterIndex(inputWithoutDelimiterStart)
+    return inputWithoutDelimiterStart.index('\n')
   end
 end
