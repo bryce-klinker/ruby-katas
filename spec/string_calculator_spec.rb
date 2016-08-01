@@ -57,9 +57,18 @@ describe StringCalculator do
     end
 
     context('given multiple delimiters') do
-      it('should add numbers') do
-        expect(@calculator.add('//[*][%]\n12*5%4')).to eql(21)
+      context('single character custom delimiter') do
+        it('should add numbers') do
+          expect(@calculator.add('//[*][%]\n12*5%4')).to eql(21)
+        end
       end
+
+      context('multiple character custom delimiter') do
+        it('should add numbers') do
+          expect(@calculator.add('//[***][..]\n12***5..4')).to eql(21)
+        end
+      end
+
     end
   end
 end
