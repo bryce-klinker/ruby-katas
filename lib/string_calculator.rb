@@ -5,6 +5,8 @@ class StringCalculator
     end
 
     numbers = getNumbers(input)
+      .select { |number| number < 1000 }
+
     if numbers.any? { |number| number < 0}
       raise ArgumentError, 'No Negatives allowed', caller
     end
@@ -13,54 +15,38 @@ class StringCalculator
   end
 
   def getNumbers(input)
-    delimiter = hasCustomDelimiter(input) ? getDelimiter(input) : ','
-    numberString = hasCustomDelimiter(input) ? stripDelimiter(input) : input
-    return numberString.split(delimiter).map { |val| val.to_i }
+    normalizedInput = normalizeDelimiters(input)
+    return normalizedInput.split(',').map { |val| val.to_i }
   end
 
-  def stripDelimiter(input)
-    endOfDelimiterIndex = input.index('\n')
-    return input[endOfDelimiterIndex + 2..-1]
-  end
-
-  def hasCustomDelimiter(input)
-    return input.start_with?('//')
-  end
-
-  def getDelimiter(input)
-    unless hasCustomDelimiter(input)
-      return ','
+  def normalizeDelimiters(input)
+    splitInput = input.split('\n')
+    if splitInput.count <= 1
+      return input
     end
 
-    if isSingleCharacterDelimiter(input)
-      return getSingleCharacterDelimiter(input)
+    normalized = splitInput[1]
+    delimiters = getDelimiters(splitInput[0])
+    delimiters.each do |delimiter|
+      normalized = normalized.gsub(delimiter, ',')
     end
 
-    return getMultipleCharacterDelimiter(input)
+    return normalized
+  end
+  
+  def getDelimiters(inputDelimiter)
+    delimiters = inputDelimiter[2..-1]
+    if delimiters.length == 1
+      return [delimiters]
+    end
+
+    return parseDelimiters(delimiters)
   end
 
-  def isSingleCharacterDelimiter(input)
-    return hasCustomDelimiter(input) & !input.start_with?('//[')
-  end
-
-  def getSingleCharacterDelimiter(input)
-    inputWithoutDelimiterIndicator = stripCustomDelimiterStart(input)
-    endOfDelimiterIndex = getEndOfDelimiterIndex(inputWithoutDelimiterIndicator)
-
-    return inputWithoutDelimiterIndicator[0..endOfDelimiterIndex - 1]
-  end
-
-  def getMultipleCharacterDelimiter(input)
-    inputWithoutDelimiterIndicator = stripCustomDelimiterStart(input)
-    endOfDelimiterIndex = getEndOfDelimiterIndex(inputWithoutDelimiterIndicator)
-    return inputWithoutDelimiterIndicator[1..endOfDelimiterIndex - 2]
-  end
-
-  def stripCustomDelimiterStart(input)
-    return input[2..-1]
-  end
-
-  def getEndOfDelimiterIndex(inputWithoutDelimiterStart)
-    return inputWithoutDelimiterStart.index('\n')
+  def parseDelimiters(inputDelimiter)
+    return inputDelimiter
+      .split('[')
+      .select { |part| part.length > 1 }
+      .map { |part| part.gsub(']', '') }
   end
 end

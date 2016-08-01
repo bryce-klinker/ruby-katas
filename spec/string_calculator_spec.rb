@@ -49,5 +49,17 @@ describe StringCalculator do
         expect{ @calculator.add('-3') }.to raise_error(ArgumentError, 'No Negatives allowed')
       end
     end
+
+    context('given number(s) greater than 1000') do
+      it('should ignore 1000') do
+        expect(@calculator.add('1000,45')).to eql(45)
+      end
+    end
+
+    context('given multiple delimiters') do
+      it('should add numbers') do
+        expect(@calculator.add('//[*][%]\n12*5%4')).to eql(21)
+      end
+    end
   end
 end
