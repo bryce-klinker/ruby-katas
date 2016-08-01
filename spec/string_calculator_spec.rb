@@ -1,7 +1,7 @@
 require 'string_calculator'
 
 describe StringCalculator do
-  describe('.add') do
+  describe('add') do
     before(:each) do
       @calculator = StringCalculator.new
     end
@@ -41,6 +41,12 @@ describe StringCalculator do
         it('returns sum of numbers') do
           expect(@calculator.add('//[&&]\n54&&54')).to eql(108)
         end
+      end
+    end
+
+    context('given negative numbers') do
+      it('should throw no negatives allowed') do
+        expect{ @calculator.add('-3') }.to raise_error(ArgumentError, 'No Negatives allowed')
       end
     end
   end

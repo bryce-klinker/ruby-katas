@@ -5,6 +5,10 @@ class StringCalculator
     end
 
     numbers = getNumbers(input)
+    if numbers.any? { |number| number < 0}
+      raise ArgumentError, 'No Negatives allowed', caller
+    end
+
     return numbers.inject(0) { |sum, number| sum + number }
   end
 
